@@ -1,0 +1,39 @@
+name: "Deploy Pages"
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    name: "Build Pages"
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: "Fetch Sources"
+      uses: actions/checkout@v3
+      with:
+        ref: "main"
+        repository: "{{ github.repository_owner }}/home"
+    - name: "Build Pages"
+      runs: make ssg-build-docker
+    - name: "Upload Pages Artifact"
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: "./data/ssg"
+
+  deploy:
+    name: "Deploy Pages"
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: "Deploy Pages"
+      id: deployment
+      uses: actions/deploy-pages@v1
