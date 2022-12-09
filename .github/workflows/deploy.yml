@@ -15,9 +15,9 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: "main"
-        repository: "{{ github.repository_owner }}/home"
+        repository: "${{ github.repository_owner }}/home"
     - name: "Build Pages"
-      runs: make ssg-build-docker
+      run: make ssg-build-docker
     - name: "Upload Pages Artifact"
       uses: actions/upload-pages-artifact@v1
       with:
